@@ -1,0 +1,27 @@
+{
+  "name": "disco",
+  "version": "0.0.1",
+  "description": "FRP library for minimalists",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:L8D/disco.git"
+  },
+  "keywords": [
+    "frp",
+    "functional",
+    "fantasyland"
+  ],
+  "author": "Tenor Biel <tenorbiel@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/L8D/disco/issues"
+  },
+  "homepage": "https://github.com/L8D/disco",
+  "devDependencies": {
+    "mocha": "^2.0.1"
+  }
+}
