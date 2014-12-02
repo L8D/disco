@@ -4,16 +4,6 @@ function Observable(subscribe) {
   this.subscribe = subscribe;
 }
 
-function toObservable(obj) {
-  if (obj instanceof Observable) {
-    return obj;
-  } else if (obj != null && typeof obj.then === 'function') {
-    return Observable.fromPromise(obj);
-  } else {
-    throw new TypeError('cannot convert ' + obj + ' to Observable')
-  }
-}
-
 Observable.fromPromise = function(fn) {
   return new Observable(function(next, handle, finish) {
     fn().then(function(event) {
@@ -76,7 +66,7 @@ Observable.empty = function() {
   });
 };
 
-var proto = Observable.proto;
+var proto = Observable.prototype;
 
 // map (O a) :: (a -> b) -> O b
 proto.map = function(fn) {
@@ -111,7 +101,7 @@ proto.mergeAll = function() {
     return sub(function(event) {
       unfinished++;
 
-      toObservable(event).subscribe(next, handle, function() {
+      event.subscribe(next, handle, function() {
         unfinished--;
 
         if (thisFinished && unfinished === 0) finish();
@@ -129,8 +119,6 @@ proto.chain = function(fn) {
 
 // merge (O a) :: O a -> O a
 proto.merge = function(that) {
-  that = toObservable(that);
-
   var subThis = this.subscribe;
   var subThat = that.subscribe;
 
@@ -159,8 +147,6 @@ proto.merge = function(that) {
 
 // concat (O a) :: O a -> O a
 proto.concat = function(that) {
-  that = toObservable(that);
-
   var subThis = this.subscribe;
   var subThat = that.subscribe;
 
@@ -187,7 +173,7 @@ proto.concatAll = function() {
 
     return sub(function(event) {
       if (waiting.length === 0) {
-        toObservable(event).subscribe(next, handle, function finish2() {
+        event.subscribe(next, handle, function finish2() {
           // if there are children waiting, then start on the next one
           // if not, and this is finished, then that means we are the
           // last, so call finish
@@ -214,8 +200,6 @@ proto.concatMap = function(fn) {
 
 // zipSwitch (O a) :: O b -> (a -> b -> c) -> O c
 proto.zipSwitch = function(that, zipper) {
-  that = toObservable(that);
-
   var subThis = this.subscribe;
   var subThat = that.subscribe;
 
@@ -254,8 +238,6 @@ proto.zipSwitch = function(that, zipper) {
 
 // zip (O a) :: O b -> (a -> b -> c) -> O c
 proto.zip = function(that, zipper) {
-  that = toObservable(that);
-
   var subThis = this.subscribe;
   var subThat = that.subscribe;
 
